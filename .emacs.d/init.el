@@ -1,0 +1,74 @@
+; Use the package manager
+(require 'package)
+
+; Sets package management sources
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.org/packages/") t)
+             '("gnu" . "http://mirrors.163.com/elpa/gnu/")
+
+; Initialize the package manager
+(package-initialize)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (gruvbox-dark-hard)))
+ '(custom-safe-themes
+   (quote
+    ("a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" default)))
+ '(package-selected-packages (quote (gruvbox-theme ## evil))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+; Don't display the ugly startup message (particularly ugly in the GUI)
+(setq inhibit-startup-message t)
+
+; No toolbar
+(tool-bar-mode -1)
+
+; Fix Problem
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+; Use evil mode
+(require 'evil)
+(evil-mode t)
+
+; Give us back Ctrl+U for vim emulation
+(setq evil-want-C-u-scroll t)
+
+; Save buffers with Ctrl+S
+(global-set-key (kbd "C-s") 'evil-write)
+
+(defun minibuffer-keyboard-quit ()
+    "Abort recursive edit.
+  In Delete Selection mode, if the mark is active, just deactivate it;
+  then it takes a second \\[keyboard-quit] to abort the minibuffer."
+    (interactive)
+    (if (and delete-selection-mode transient-mark-mode mark-active)
+	(setq deactivate-mark  t)
+      (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+      (abort-recursive-edit)))
+
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(global-set-key [escape] 'evil-exit-emacs-state)
+
+; Set cursor colors
+(when (display-graphic-p)
+  (setq evil-emacs-state-cursor '("red" box))
+  (setq evil-normal-state-cursor '("green" box))
+  (setq evil-visual-state-cursor '("orange" box))
+  (setq evil-insert-state-cursor '("red" bar))
+  (setq evil-replace-state-cursor '("red" bar))
+  (setq evil-operator-state-cursor '("red" hollow))
+)
